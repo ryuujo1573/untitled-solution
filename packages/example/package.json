@@ -1,0 +1,10 @@
+{
+  "name": "@cnmjs/example",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  }
+}
