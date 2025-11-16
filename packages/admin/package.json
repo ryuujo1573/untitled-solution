@@ -1,15 +1,17 @@
 {
-  "name": "elysia",
-  "version": "1.0.50",
+  "name": "@cnmjs/admin",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "bun": "bun"
   },
   "dependencies": {
-    "elysia": "latest"
+    "hono": "^4.10.6"
   },
   "devDependencies": {
-    "bun-types": "latest"
-  },
-  "module": "src/index.js"
+    "wrangler": "^4.4.0",
+    "typescript": "^5.9.3"
+  }
 }

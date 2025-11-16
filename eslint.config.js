@@ -4,11 +4,31 @@ import parserTs from '@typescript-eslint/parser'
 import pluginPrettier from 'eslint-plugin-prettier'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import { includeIgnoreFile } from '@eslint/compat'
+import { globalIgnores } from 'eslint/config'
 import { resolve } from 'node:path'
 
 const gitignorePath = resolve('.gitignore')
 
+const ignores = [
+  '.vscode/settings.json',
+  '**/etc',
+  '**/external',
+  '**/tsdoc-metadata.json',
+  '**/rollup.config.*',
+  '**/tsconfig.tsbuildinfo',
+  '**/vite.config.ts',
+  '**/*.spec.tsx',
+  '**/*.spec.ts',
+  '**/.netlify',
+  'pnpm-lock.yaml',
+  'package-lock.json',
+  'yarn.lock',
+  '**/server',
+  'eslint.config.js',
+]
+
 export default [
+  globalIgnores(ignores),
   includeIgnoreFile(gitignorePath),
   {
     files: ['**/*.ts', '**/*.tsx'],
