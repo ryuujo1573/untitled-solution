@@ -10,5 +10,10 @@
     // https://github.com/microsoft/vscode/commit/083bf9020407ea5a91199eb1f0b373859df8d600#diff-88456bc9b7caa2f8126aea0107b4671db0f094961aaf39a7c689f890e23aaaba
     "output.selfClosingStyle": "xhtml"
   },
-  "files.eol": "\n"
+  "files.eol": "\n",
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Always use the Conventional Commits format (e.g., feat: ..., fix: ..., docs: ...). Keep the summary line under 50 characters. Add a blank line and 'Co-authored-by: github-copilot <noreply@github.com>' at the end of every message."
+    }
+  ]
 }
