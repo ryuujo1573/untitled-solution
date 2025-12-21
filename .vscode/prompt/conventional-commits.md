@@ -58,7 +58,7 @@ Use package/app names from this monorepo:
 Always end every commit message with a blank line followed by:
 
 ```
-Co-authored-by: github-copilot <noreply@github.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ## Examples
@@ -66,7 +66,7 @@ Co-authored-by: github-copilot <noreply@github.com>
 ```
 feat(schema): add layout validation rules
 
-Co-authored-by: github-copilot <noreply@github.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ```
@@ -75,7 +75,7 @@ fix(design): resolve viewport resize flicker
 * debounce resize handler
 * cache computed dimensions
 
-Co-authored-by: github-copilot <noreply@github.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ```
@@ -83,5 +83,5 @@ refactor(core)!: rename Entity to BaseEntity
 
 BREAKING CHANGE: all imports must be updated
 
-Co-authored-by: github-copilot <noreply@github.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
