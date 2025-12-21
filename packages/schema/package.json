@@ -1,7 +1,9 @@
 {
   "name": "@cnmjs/schema",
   "version": "0.0.0-alpha",
-  "scripts": {},
+  "scripts": {
+    "validate:schema": "bun run scripts/validate.ts"
+  },
   "private": true,
   "type": "module",
   "dependencies": {

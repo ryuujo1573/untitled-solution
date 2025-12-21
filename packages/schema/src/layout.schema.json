@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cnmjs.dev/schemas/layout-ir.json",
+  "title": "Layout IR Schema",
+  "description": "A structured intermediate representation for describing UI layouts",
+  "type": "object",
+  "required": ["version", "root"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version identifier"
+    },
+    "root": {
+      "$ref": "#/$defs/LayoutNode"
+    }
+  },
+  "$defs": {
+    "LayoutContext": {
+      "type": "string",
+      "enum": ["flex", "grid", "block", "scroll"],
+      "description": "Layout formatting context type"
+    },
+    "ComponentCategory": {
+      "type": "string",
+      "enum": ["reusable", "library", "new", "primitive"],
+      "description": "Component classification for visualization"
+    },
+    "ResponsiveValue": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        {
+          "type": "object",
+          "description": "Breakpoint-keyed responsive values (e.g., { base: '100%', lg: '240px' })",
+          "additionalProperties": {
+            "oneOf": [{ "type": "string" }, { "type": "number" }]
+          }
+        }
+      ]
+    },
+    "LayoutBaseProps": {
+      "type": "object",
+      "description": "Layout-affecting properties only, no decorative styles",
+      "properties": {
+        "direction": {
+          "type": "string",
+          "enum": ["row", "column"],
+          "description": "Flex direction (for flex context)"
+        },
+        "gap": {
+          "$ref": "#/$defs/ResponsiveValue",
+          "description": "Gap between children"
+        },
+        "align": {
+          "type": "string",
+          "description": "Cross-axis alignment (align-items)"
+        },
+        "justify": {
+          "type": "string",
+          "description": "Main-axis alignment (justify-content)"
+        },
+        "flex": {
+          "$ref": "#/$defs/ResponsiveValue",
+          "description": "Flex grow/shrink/basis shorthand"
+        },
+        "width": {
+          "$ref": "#/$defs/ResponsiveValue",
+          "description": "Width constraint"
+        },
+        "height": {
+          "$ref": "#/$defs/ResponsiveValue",
+          "description": "Height constraint"
+        },
+        "padding": {
+          "$ref": "#/$defs/ResponsiveValue",
+          "description": "Inner spacing"
+        },
+        "columns": {
+          "type": "string",
+          "description": "Grid template columns (for grid context)"
+        },
+        "rows": {
+          "type": "string",
+          "description": "Grid template rows (for grid context)"
+        },
+        "axis": {
+          "type": "string",
+          "enum": ["x", "y", "both"],
+          "description": "Scroll axis (for scroll context)"
+        }
+      },
+      "additionalProperties": true
+    },
+    "LayoutNode": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Layout container node",
+          "required": ["id", "type", "context"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier for this node"
+            },
+            "type": {
+              "type": "string",
+              "const": "layout"
+            },
+            "context": {
+              "$ref": "#/$defs/LayoutContext"
+            },
+            "props": {
+              "$ref": "#/$defs/LayoutBaseProps"
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/LayoutNode"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "Component placeholder node",
+          "required": ["id", "type", "category", "name"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier for this node"
+            },
+            "type": {
+              "type": "string",
+              "const": "component"
+            },
+            "category": {
+              "$ref": "#/$defs/ComponentCategory"
+            },
+            "name": {
+              "type": "string",
+              "description": "Component name in format 'Namespace:ComponentName' (e.g., 'MUI:AppBar', 'Biz:StatCard')"
+            },
+            "props": {
+              "type": "object",
+              "description": "Component-specific props",
+              "additionalProperties": true
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/LayoutNode"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}
