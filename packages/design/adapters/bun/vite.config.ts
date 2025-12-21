@@ -14,6 +14,7 @@ export default extendConfig(baseConfig, () => {
         input: ["src/entry.bun.ts", "@qwik-city-plan"],
       },
       minify: false,
+      outDir: "dist-bun",
     },
     plugins: [
       bunServerAdapter({
