@@ -1,13 +1,21 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 
-const app = new Hono()
+const app = new Hono<{
+  Bindings: {
+    ALLOWED_ORIGINS: string
+  }
+}>().basePath('/untitled/admin')
 
 // Enable CORS for frontend development
-app.use('/*', cors({
-  origin: ['http://localhost:3001'], // Qwik dev server
-  credentials: true,
-}))
+app.use('/*', async (c, next) => {
+  const origins = c.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173']
+  const corsMiddleware = cors({
+    origin: origins,
+    credentials: true,
+  })
+  return corsMiddleware(c, next)
+})
 
 // API routes
 const api = new Hono()
@@ -20,9 +28,19 @@ api.get('/users', (c) => {
   // TODO: Integrate with Ory Kratos
   return c.json({
     data: [
-      { id: '1', email: 'alice@campus.edu', student_id: '2021001', department: 'Computer Science' },
-      { id: '2', email: 'bob@campus.edu', student_id: '2021002', department: 'Mathematics' },
-    ]
+      {
+        id: '1',
+        email: 'alice@campus.edu',
+        student_id: '2021001',
+        department: 'Computer Science',
+      },
+      {
+        id: '2',
+        email: 'bob@campus.edu',
+        student_id: '2021002',
+        department: 'Mathematics',
+      },
+    ],
   })
 })
 
@@ -36,8 +54,8 @@ app.get('/', (c) => {
     version: '1.0.0',
     endpoints: {
       health: '/api/health',
-      users: '/api/users'
-    }
+      users: '/api/users',
+    },
   })
 })
 

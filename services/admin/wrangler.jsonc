@@ -1,15 +1,22 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "untitled_admin",
+  "name": "untitled-solution",
   "main": "src/index.ts",
-  "compatibility_date": "2025-11-15"
+  "compatibility_date": "2025-11-15",
+  "routes": [
+    {
+      "pattern": "api.shencang.blue/untitled/admin*",
+      "custom_domain": true
+    }
+  ]
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
-  // "kv_namespaces": [
+  "vars": {
+    "ALLOWED_ORIGINS": "https://untitled.shencang.blue,http://localhost:3001",
+    "BASE_PATH": "/untitled/admin"
+  }
+  // "compatibility_flags": [
   //   {
   //     "binding": "MY_KV_NAMESPACE",
   //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
