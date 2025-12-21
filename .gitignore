@@ -13,6 +13,7 @@ output
 .cache
 .
 
+tsconfig.tsbuildinfo
 node_modules/
 build/
 dist/

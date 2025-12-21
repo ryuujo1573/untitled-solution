@@ -1,4 +1,4 @@
-import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import { NodeBase } from "../../model/node";
 
 export const Flow = component$(() => {
