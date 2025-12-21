@@ -3,9 +3,11 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
+    "dev:ui": "bun --filter @cnmjs/admin-front dev",
+    "build": "vite build && wrangler deploy --minify",
+    "build:ui": "bun --filter @cnmjs/admin-front build",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
-    "bun": "bun"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
     "hono": "^4.10.6"
