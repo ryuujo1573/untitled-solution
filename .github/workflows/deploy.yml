@@ -29,3 +29,11 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           zoneId: ${{ secrets.CLOUDFLARE_ZONE_ID }}
           workingDirectory: services/admin
+
+      - name: Deploy Admin Front to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=untitled-admin-front
+          workingDirectory: apps/admin
