@@ -127,7 +127,6 @@ export const UserInterface = component$(() => {
     window.addEventListener("pointerup", onPointerUp);
   });
 
-
   const onResizeStart = $((e: PointerEvent) => {
     // 阻止默认行为，防止触发系统的拖放或选中
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
