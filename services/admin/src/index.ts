@@ -1,22 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 
-const app = new Hono<{
-  Bindings: {
-    ALLOWED_ORIGINS: string
-  }
-}>().basePath('/untitled/')
-
-// Enable CORS for frontend development
-app.use('/*', async (c, next) => {
-  const origins = c.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173']
-  const corsMiddleware = cors({
-    origin: origins,
-    credentials: true,
-  })
-  return corsMiddleware(c, next)
-})
-
 // API routes
 const api = new Hono()
 
@@ -44,8 +28,21 @@ api.get('/users', (c) => {
   })
 })
 
-// Mount API under /admin prefix
-app.route('/admin', api)
+const app = new Hono<{
+  Bindings: {
+    ALLOWED_ORIGINS: string
+  }
+}>().route('/', api)
+
+// Enable CORS for frontend development
+app.use('/*', async (c, next) => {
+  const origins = c.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173']
+  const corsMiddleware = cors({
+    origin: origins,
+    credentials: true,
+  })
+  return corsMiddleware(c, next)
+})
 
 // Root endpoint
 app.get('/', (c) => {
