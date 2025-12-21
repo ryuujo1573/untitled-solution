@@ -1,3 +1,9 @@
 [install.cache]
 
 disable = true
+
+[install]
+# Only install package versions published at least 3 days ago
+minimumReleaseAge = 259200 # seconds
+# Exclude trusted packages from the age gate
+minimumReleaseAgeExcludes = ["@types/node", "typescript"]

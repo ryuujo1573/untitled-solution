@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "traits": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "title": "Email"
+        },
+        "uid": {
+          "type": "string",
+          "title": "User ID"
+        },
+        "phone": {
+          "type": "string",
+          "title": "Phone number"
+        }
+      },
+      "required": ["uid", "phone"]
+    }
+  }
+}

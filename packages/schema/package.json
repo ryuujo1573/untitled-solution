@@ -1,0 +1,10 @@
+{
+  "name": "@cnmjs/schema",
+  "version": "0.0.0-alpha",
+  "scripts": {},
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "zod": "^4.2.1"
+  }
+}
