@@ -5,7 +5,7 @@ const app = new Hono<{
   Bindings: {
     ALLOWED_ORIGINS: string
   }
-}>().basePath('/untitled/admin')
+}>().basePath('/untitled/')
 
 // Enable CORS for frontend development
 app.use('/*', async (c, next) => {
@@ -44,8 +44,8 @@ api.get('/users', (c) => {
   })
 })
 
-// Mount API under /api prefix
-app.route('/api', api)
+// Mount API under /admin prefix
+app.route('/admin', api)
 
 // Root endpoint
 app.get('/', (c) => {
