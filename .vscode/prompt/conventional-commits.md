@@ -55,11 +55,15 @@ Use package/app names from this monorepo:
 
 ### Co-authorship
 
-Always end every commit message with a blank line followed by:
+Read the `.ai-model` file to determine which AI model was used for this commit.
+Then look up the corresponding `Co-Authored-By` value from `CONTRIBUTION.md`.
+See [Co-Author Presets](/CONTRIBUTION.md)
 
-```
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
+1. Before committing, run `bun run select-model` to select the AI model used
+2. The selection is stored in `.ai-model` (git-ignored)
+3. Commit message generation will automatically include the correct co-author trailer
+
+Always add a blank line before the `Co-Authored-By` trailer when included.
 
 ## Examples
 
@@ -75,7 +79,7 @@ fix(design): resolve viewport resize flicker
 * debounce resize handler
 * cache computed dimensions
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
 ```
 
 ```
