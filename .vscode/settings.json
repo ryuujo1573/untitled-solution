@@ -13,7 +13,7 @@
   "files.eol": "\n",
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
-      "text": "Always use the Conventional Commits format (e.g., feat: ..., fix: ..., docs: ...). Keep the summary line under 50 characters. Add a blank line and 'Co-authored-by: github-copilot <noreply@github.com>' at the end of every message."
+      "file": ".vscode/prompt/conventional-commits.md"
     }
   ]
 }
