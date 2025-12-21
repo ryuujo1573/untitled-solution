@@ -1,0 +1,36 @@
+{
+  "claude": {
+    "name": "Claude",
+    "email": "noreply@anthropic.com",
+    "models": [
+      { "value": "Claude Haiku 4.5", "label": "Claude Haiku 4.5" },
+      { "value": "Claude Opus 4.5", "label": "Claude Opus 4.5" },
+      { "value": "Claude Sonnet 4", "label": "Claude Sonnet 4" }
+    ]
+  },
+  "gpt": {
+    "name": "Copilot",
+    "email": "198982749+Copilot@users.noreply.github.com",
+    "models": [
+      { "value": "GPT-4.1", "label": "GPT-4.1" },
+      { "value": "GPT-4o", "label": "GPT-4o" },
+      { "value": "GPT-5", "label": "GPT-5" },
+      { "value": "GPT-5.1", "label": "GPT-5.1" },
+      { "value": "GPT-5.2", "label": "GPT-5.2" }
+    ]
+  },
+  "gemini": {
+    "name": "Gemini",
+    "email": "176961590+gemini-code-assist[bot]@users.noreply.github.com",
+    "models": [
+      { "value": "Gemini 2.5 Pro", "label": "Gemini 2.5 Pro" },
+      { "value": "Gemini 3 Flash", "label": "Gemini 3 Flash" },
+      { "value": "Gemini 3 Pro", "label": "Gemini 3 Pro" }
+    ]
+  },
+  "none": {
+    "models": [
+      { "value": "human", "label": "None (manual)", "hint": "No AI assistance" }
+    ]
+  }
+}

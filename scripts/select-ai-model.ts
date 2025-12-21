@@ -7,25 +7,18 @@
 import { writeFileSync } from 'fs'
 import { join } from 'path'
 import * as p from '@clack/prompts'
-
-const AI_MODELS = [
-  { value: 'Claude Opus 4.5', label: 'Claude Opus 4.5' },
-  { value: 'Claude Sonnet 4', label: 'Claude Sonnet 4' },
-  { value: 'GPT-4.1', label: 'GPT-4.1' },
-  { value: 'GPT-4o', label: 'GPT-4o' },
-  { value: 'Gemini 2.5 Pro', label: 'Gemini 2.5 Pro' },
-  { value: 'o3', label: 'o3' },
-  { value: 'None (manual)', label: 'None (manual)', hint: 'No AI assistance' },
-] as const
+import AI_CONFIG from './ai-models.json'
 
 const OUTPUT_FILE = join(import.meta.dir, '..', '.ai-model')
 
 async function main() {
   p.intro('Select AI Model for this commit')
 
+  const options = Object.values(AI_CONFIG).flatMap((s: any) => s.models)
+
   const model = await p.select({
     message: 'Which AI model are you using?',
-    options: [...AI_MODELS],
+    options: options as any,
   })
 
   if (p.isCancel(model)) {

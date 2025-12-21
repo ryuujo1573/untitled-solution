@@ -53,24 +53,10 @@ Use package/app names from this monorepo:
 - Add `!` after type/scope: `feat(core)!: remove deprecated API`
 - Or use footer: `BREAKING CHANGE: <description>`
 
-### Co-authorship
-
-Read the `.ai-model` file to determine which AI model was used for this commit.
-Then look up the corresponding `Co-Authored-By` value from `CONTRIBUTION.md`.
-See [Co-Author Presets](/CONTRIBUTION.md)
-
-1. Before committing, run `bun run select-model` to select the AI model used
-2. The selection is stored in `.ai-model` (git-ignored)
-3. Commit message generation will automatically include the correct co-author trailer
-
-Always add a blank line before the `Co-Authored-By` trailer when included.
-
 ## Examples
 
 ```
 feat(schema): add layout validation rules
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ```
@@ -78,14 +64,10 @@ fix(design): resolve viewport resize flicker
 
 * debounce resize handler
 * cache computed dimensions
-
-Co-Authored-By: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
 ```
 
 ```
 refactor(core)!: rename Entity to BaseEntity
 
 BREAKING CHANGE: all imports must be updated
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```

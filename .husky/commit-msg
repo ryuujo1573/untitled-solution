@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+echo "Husky: Running commit-msg hook..."
+bun run scripts/append-co-author.ts "$1"
