@@ -1,0 +1,76 @@
+version: "1.0"
+root:
+  id: page-root
+  type: layout
+  context: flex
+  props:
+    direction: column
+    height: 100%
+    gap: 0
+  children:
+    - id: header
+      type: component
+      category: library
+      name: "MUI:AppBar"
+      props:
+        title: Admin Dashboard
+    - id: main-container
+      type: layout
+      context: flex
+      props:
+        direction: row
+        flex: 1
+        gap: 0
+      children:
+        - id: sidebar-wrapper
+          type: layout
+          context: scroll
+          props:
+            width: 260px
+            axis: y
+            padding: 1rem
+          children:
+            - id: nav-menu
+              type: component
+              category: reusable
+              name: "Biz:NavigationMenu"
+            - id: user-profile-mini
+              type: component
+              category: reusable
+              name: "Biz:UserProfile"
+        - id: content-area
+          type: layout
+          context: flex
+          props:
+            direction: column
+            flex: 1
+            padding: 2rem
+            gap: 2rem
+          children:
+            - id: breadcrumb
+              type: component
+              category: library
+              name: "MUI:Breadcrumbs"
+            - id: stats-grid
+              type: layout
+              context: grid
+              props:
+                columns: "repeat(auto-fit, minmax(240px, 1fr))"
+                gap: 1.5rem
+              children:
+                - id: stat-1
+                  type: component
+                  category: new
+                  name: "Biz:RevenueChart"
+                - id: stat-2
+                  type: component
+                  category: new
+                  name: "Biz:UserActivity"
+                - id: stat-3
+                  type: component
+                  category: new
+                  name: "Biz:SystemHealth"
+            - id: data-table
+              type: component
+              category: primitive
+              name: "HTML:table"

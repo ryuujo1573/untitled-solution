@@ -1,5 +1,6 @@
 {
   "name": "@cnmjs/design",
+  "version": "1.0.0",
   "description": "BaaS Design System",
   "engines": {
     "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
@@ -28,9 +29,13 @@
     "@builder.io/qwik": "^1.17.2",
     "@builder.io/qwik-city": "^1.17.2",
     "@eslint/js": "latest",
+    "@modyfi/vite-plugin-yaml": "^1.1.1",
+    "@qwikest/icons": "^0.0.13",
+    "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.4",
     "@types/bun": "*",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "20.19.0",
     "daisyui": "^5.5.5",
     "eslint": "9.32.0",
@@ -38,10 +43,10 @@
     "globals": "16.4.0",
     "prettier": "3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
+    "redux": "^5.0.1",
     "tailwindcss": "^4.1.4",
     "typescript": "5.4.5",
     "typescript-eslint": "8.38.0",
-    "typescript-plugin-css-modules": "latest",
     "undici": "*",
     "vite": "7.1.11",
     "vite-tsconfig-paths": "^4.2.1"
@@ -50,5 +55,11 @@
     "plugins": [
       "prettier-plugin-tailwindcss"
     ]
+  },
+  "dependencies": {
+    "@cnmjs/schema": "workspace:*",
+    "js-yaml": "^4.1.0",
+    "monaco-editor": "^0.55.1",
+    "yaml": "^2.8.2"
   }
 }

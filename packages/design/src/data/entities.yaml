@@ -1,0 +1,60 @@
+entities:
+  - name: User
+    id: "1"
+    properties:
+      - name: id
+        type: bigint
+        valueExample: "12345"
+        isIdentifier: true
+      - name: username
+        type: string
+        valueExample: "john_doe"
+      - name: email
+        type: string
+        valueExample: "john@example.com"
+      - name: age
+        type: number
+        valueExample: "25"
+      - name: isActive
+        type: boolean
+        valueExample: "true"
+
+  - name: Product
+    id: "2"
+    properties:
+      - name: sku
+        type: string
+        valueExample: "PROD-001"
+        isIdentifier: true
+      - name: name
+        type: string
+        valueExample: "Laptop"
+      - name: price
+        type: number
+        valueExample: "999.99"
+      - name: inStock
+        type: boolean
+        valueExample: "true"
+      - name: quantity
+        type: number
+        valueExample: "50"
+
+  - name: Order
+    id: "3"
+    properties:
+      - name: orderId
+        type: bigint
+        valueExample: "987654321"
+        isIdentifier: true
+      - name: customerName
+        type: string
+        valueExample: "Jane Smith"
+      - name: totalAmount
+        type: number
+        valueExample: "1499.99"
+      - name: isPaid
+        type: boolean
+        valueExample: "false"
+      - name: items
+        type: object
+        valueExample: "[]"

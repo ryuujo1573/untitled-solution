@@ -5,8 +5,12 @@
 import { defineConfig, type UserConfig } from "vite";
 import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
-import tailwindcss from "@tailwindcss/vite";
+
 import tsconfigPaths from "vite-tsconfig-paths";
+import yaml from "@modyfi/vite-plugin-yaml";
+
+import tailwindcss from "@tailwindcss/vite";
+import { execSync } from "child_process";
 
 import pkg from "./package.json";
 
@@ -19,17 +23,37 @@ const { dependencies = {}, devDependencies = {} } = pkg as any as {
 };
 errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 
+const getGitInfo = () => {
+  try {
+    const hash = execSync("git rev-parse --short HEAD").toString().trim();
+    const isDirty =
+      execSync("git status --porcelain").toString().trim().length > 0;
+    return { hash, isDirty };
+  } catch (e) {
+    return { hash: "unknown", isDirty: false };
+  }
+};
+
+const gitInfo = getGitInfo();
+
 /**
  * Note that Vite normally starts from `index.html` but the qwikCity plugin makes start at `src/entry.ssr.tsx` instead.
  */
 export default defineConfig(({ command, mode }): UserConfig => {
   return {
     plugins: [
-      qwikCity(),
-      qwikVite(),
+      qwikCity({}),
+      qwikVite({}),
       tsconfigPaths({ root: "." }),
+      yaml(),
       tailwindcss(),
     ],
+    define: {
+      __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
+      __BUILD_VERSION__: JSON.stringify(pkg.version),
+      __GIT_HASH__: JSON.stringify(gitInfo.hash),
+      __GIT_DIRTY__: JSON.stringify(gitInfo.isDirty),
+    },
     // This tells Vite which dependencies to pre-build in dev mode.
     optimizeDeps: {
       // Put problematic deps that break bundling here, mostly those with binaries.

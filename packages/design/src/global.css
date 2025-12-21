@@ -1,4 +1,24 @@
 @import "tailwindcss";
 
-@plugin 'daisyui';
+@plugin 'daisyui' {
+  theme:
+    emerald --default,
+    dracula --prefersdark;
+}
 @plugin '@tailwindcss/typography';
+
+@utility entity-definition-line {
+  background-color: cyan;
+}
+
+@layer components {
+  .scroll-pattern {
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      oklch(var(--bc) / 0.1) 10px,
+      oklch(var(--bc) / 0.1) 11px
+    );
+  }
+}
