@@ -10,6 +10,7 @@ import { LayoutNodeRenderer } from "~/components/layout-renderer";
 import { MonacoEditor } from "~/components/monaco-editor";
 import { VersionBadge } from "~/components/version-badge";
 import { ViewportControls } from "~/components/viewport-controls";
+import { FlCopySolid } from "@qwikest/icons/flowbite";
 import YAML from "yaml";
 
 import initialIRRaw from "~/data/initial-ir.yaml";
@@ -235,21 +236,7 @@ export const UserInterface = component$(() => {
             data-tip="Copy to clipboard"
             onClick$={syncToAgent}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="opacity-90"
-            >
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-            </svg>
+            <FlCopySolid class="h-3.5 w-3.5 opacity-90" />
             <span class="hidden xl:inline">Copy to clipboard</span>
           </button>
         </div>
