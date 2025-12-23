@@ -1,7 +1,8 @@
 import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import YAML, { type YAMLSeq, type YAMLMap, type Node, type Scalar } from "yaml";
+import YAML from "yaml";
 
+import { MonacoEditor } from "~/components/monaco-editor";
 import entitiesData from "~/data/entities.yaml" with { type: "yaml" };
 
 interface Entity {
@@ -55,9 +56,9 @@ export default component$(() => {
   const entities = useSignal<Entity[]>(defaultEntities);
   const selectedEntity = useSignal<Entity | null>(null);
   const viewMode = useSignal<"list" | "code">("list");
-  const editorRef = useSignal<HTMLDivElement>();
 
   // Load from localStorage on mount
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -81,111 +82,6 @@ export default component$(() => {
     const yamlStr = YAML.stringify({ entities: newEntities });
     localStorage.setItem(STORAGE_KEY, yamlStr);
     entities.value = newEntities;
-  });
-
-  // Initialize Monaco Editor
-  useVisibleTask$(({ track, cleanup }) => {
-    track(() => viewMode.value);
-    track(() => entities.value);
-
-    if (viewMode.value === "code" && editorRef.value) {
-      import("monaco-editor").then((monaco) => {
-        const container = editorRef.value!;
-        container.innerHTML = "";
-
-        const yamlContent = YAML.stringify({ entities: entities.value });
-
-        // Configure YAML language features
-        monaco.languages.register({ id: "yaml" });
-
-        // Add CSS for the highlight class
-        const style = document.createElement("style");
-        style.innerHTML = `
-          .entity-definition-line {
-            background-color: oklch(var(--p) / 0.15);
-            border-left: 3px solid oklch(var(--p));
-          }
-        `;
-        document.head.appendChild(style);
-
-        const editor = monaco.editor.create(container, {
-          value: yamlContent,
-          language: "yaml",
-          theme: "vs-dark",
-          minimap: { enabled: false },
-          automaticLayout: true,
-          fontSize: 14,
-          lineNumbers: "on",
-          scrollBeyondLastLine: false,
-          wordWrap: "on",
-          tabSize: 2,
-          insertSpaces: true,
-          bracketPairColorization: { enabled: true },
-          folding: true,
-          foldingStrategy: "indentation",
-        });
-
-        let decorations: any[] = [];
-
-        const updateDecorations = () => {
-          const model = editor.getModel();
-          if (!model) return;
-
-          const text = model.getValue();
-          const doc = YAML.parseDocument(text);
-          const newDecorations: any[] = [];
-
-          // Traverse CST to find entity definitions
-          const entitiesNode = doc.get<typeof YAMLSeq<Entity>>("entities");
-          if (entitiesNode && entitiesNode.items) {
-            entitiesNode.items.forEach((item) => {
-              // Get the range of the item
-              // item.range is [start, end, end]
-              if (item && item.range) {
-                const startPos = item.range[0];
-                // Convert index to line number
-                // YAML document has linePos(index) -> { line, col } (1-based line, 1-based col)
-                // Note: 'yaml' package linePos returns 1-based line numbers
-                const linePos = doc.linePos(startPos);
-
-                if (linePos) {
-                  newDecorations.push({
-                    range: new monaco.Range(linePos.line, 1, linePos.line, 1),
-                    options: {
-                      isWholeLine: true,
-                      className: "entity-definition-line",
-                      glyphMarginClassName: "text-primary",
-                    },
-                  });
-                }
-              }
-            });
-          }
-
-          decorations = editor.deltaDecorations(decorations, newDecorations);
-        };
-
-        // Initial highlight
-        updateDecorations();
-
-        editor.onDidChangeModelContent(() => {
-          try {
-            const parsed = YAML.parse(editor.getValue()) as EntitiesYaml;
-            saveEntities(parsed.entities);
-            // Clear error decorations on successful parse
-            // And update entity highlights
-            updateDecorations();
-          } catch (e) {
-            console.error("Invalid YAML:", e);
-          }
-        });
-
-        cleanup(() => {
-          editor.dispose();
-          style.remove();
-        });
-      });
-    }
   });
 
   return (
@@ -237,7 +133,22 @@ export default component$(() => {
                 ))}
               </ul>
             ) : (
-              <div class="h-96" ref={editorRef}></div>
+              <div class="border-base-300 h-96 overflow-hidden rounded-lg border">
+                <MonacoEditor
+                  value={YAML.stringify({ entities: entities.value })}
+                  language="yaml"
+                  onChange$={$((newValue) => {
+                    try {
+                      const parsed = YAML.parse(newValue) as EntitiesYaml;
+                      if (parsed && parsed.entities) {
+                        saveEntities(parsed.entities);
+                      }
+                    } catch {
+                      // Ignore parse errors while typing
+                    }
+                  })}
+                />
+              </div>
             )}
           </div>
         </div>
@@ -260,9 +171,7 @@ export default component$(() => {
                       <div class="flex items-center gap-2">
                         <span class="font-semibold">{prop.name}</span>
                         {prop.isIdentifier && (
-                          <span class="badge badge-primary badge-sm">
-                            Identifier
-                          </span>
+                          <span class="badge badge-primary badge-sm">ID</span>
                         )}
                       </div>
                       <div class="list-col-wrap"></div>
@@ -284,18 +193,6 @@ export default component$(() => {
                 Click on an entity from the list to view its properties.
               </p>
             )}
-          </div>
-        </div>
-
-        <div class="card bg-base-100 border-accent border-2 shadow-2xl">
-          <div class="card-body">
-            <h2 class="card-title text-accent">Panel 3</h2>
-            <p class="text-base-content">
-              This is the third panel content with responsive design.
-            </p>
-            <div class="card-actions justify-end">
-              <button class="btn btn-accent">Learn More</button>
-            </div>
           </div>
         </div>
       </div>
