@@ -60,10 +60,10 @@ export const LayoutNodeRenderer = component$<{
     const { colors } = config;
     const isSelected = selectedId === node.id;
 
-    const handleClick = $((e: MouseEvent) => {
+    const handleClick = $(async (e: MouseEvent) => {
       e.stopPropagation();
       if (onSelect$) {
-        onSelect$(node.id);
+        await onSelect$(node.id);
       }
     });
 

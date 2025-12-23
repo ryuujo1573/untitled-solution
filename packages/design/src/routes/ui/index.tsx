@@ -4,19 +4,30 @@ import {
   $,
   useComputed$,
   isBrowser,
+  useOnDocument,
 } from "@builder.io/qwik";
 import type { LayoutIR } from "@cnmjs/schema";
 import { LayoutNodeRenderer } from "~/components/layout-renderer";
+import { DndTreeView } from "~/components/tree-view/dnd-tree-view";
+import { LayoutNodeBuilder } from "~/components/tree-view/layout-node-builder";
 import { MonacoEditor } from "~/components/monaco-editor";
 import { VersionBadge } from "~/components/version-badge";
 import { ViewportControls } from "~/components/viewport-controls";
 import { FlCopySolid } from "@qwikest/icons/flowbite";
 import YAML from "yaml";
+import { editorSlice, type EditorState } from "~/store/editor";
 
 import initialIRRaw from "~/data/initial-ir.yaml";
 
 export const UserInterface = component$(() => {
   const initialIR = initialIRRaw as LayoutIR;
+
+  const editor = useStore<EditorState>({
+    present: initialIR,
+    past: [],
+    future: [],
+    selectedNodeId: null,
+  });
 
   const viewport = useStore({
     width: 1200,
@@ -29,14 +40,41 @@ export const UserInterface = component$(() => {
     rightPanelWidth: 600, // Increased default width
     isResizingPanel: false,
     editorMode: "yaml" as "json" | "yaml",
-    irData: initialIR,
     editorContent: YAML.stringify(initialIR),
     error: null as string | null,
-    selectedNodeId: null as string | null,
     visualSettings: {
-      showFlexInfo: true,
-      showGridInfo: true,
+      showFlexInfo: false,
+      showGridInfo: false,
     },
+  });
+
+  const dispatch = $((action: any) => {
+    // We use a plain object for the reducer, but must ensure it's not a proxy
+    // so Immer can work correctly with arrays.
+    const currentState = JSON.parse(
+      JSON.stringify({
+        present: editor.present,
+        past: editor.past,
+        future: editor.future,
+        selectedNodeId: editor.selectedNodeId,
+      }),
+    );
+
+    const nextState = editorSlice.reducer(currentState, action);
+
+    // Update the reactive store
+    editor.present = nextState.present;
+    editor.past = nextState.past;
+    editor.future = nextState.future;
+    editor.selectedNodeId = nextState.selectedNodeId;
+
+    // Sync editor content if IR changed
+    if (action.type !== "editor/selectNode") {
+      uiState.editorContent =
+        uiState.editorMode === "yaml"
+          ? YAML.stringify(editor.present)
+          : JSON.stringify(editor.present, null, 2);
+    }
   });
 
   const onEditorChange = $((value: string) => {
@@ -48,7 +86,7 @@ export const UserInterface = component$(() => {
       } else {
         parsed = YAML.parse(value);
       }
-      uiState.irData = parsed;
+      dispatch(editorSlice.actions.updateIR(parsed));
       uiState.error = null;
     } catch (e: any) {
       uiState.error = e.message;
@@ -60,9 +98,9 @@ export const UserInterface = component$(() => {
 
     try {
       if (mode === "yaml") {
-        uiState.editorContent = YAML.stringify(uiState.irData);
+        uiState.editorContent = YAML.stringify(editor.present);
       } else {
-        uiState.editorContent = JSON.stringify(uiState.irData, null, 2);
+        uiState.editorContent = JSON.stringify(editor.present, null, 2);
       }
       uiState.editorMode = mode;
       uiState.error = null;
@@ -70,6 +108,20 @@ export const UserInterface = component$(() => {
       uiState.error = "Conversion error: " + e.message;
     }
   });
+
+  useOnDocument(
+    "keydown",
+    $((e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "z") {
+        if (e.shiftKey) {
+          dispatch(editorSlice.actions.redo());
+        } else {
+          dispatch(editorSlice.actions.undo());
+        }
+        e.preventDefault();
+      }
+    }),
+  );
 
   const minCh = 40;
   const minPixelWidth = useComputed$(() => {
@@ -230,6 +282,24 @@ export const UserInterface = component$(() => {
         </div>
 
         <div class="flex gap-2">
+          <div class="join mr-2">
+            <button
+              class="btn btn-sm btn-ghost join-item text-[10px] font-bold"
+              disabled={editor.past.length === 0}
+              onClick$={() => dispatch(editorSlice.actions.undo())}
+              title="Undo (Cmd+Z)"
+            >
+              UNDO
+            </button>
+            <button
+              class="btn btn-sm btn-ghost join-item text-[10px] font-bold"
+              disabled={editor.future.length === 0}
+              onClick$={() => dispatch(editorSlice.actions.redo())}
+              title="Redo (Cmd+Shift+Z)"
+            >
+              REDO
+            </button>
+          </div>
           <button class="btn btn-sm btn-ghost">Export Code</button>
           <button
             class="btn btn-primary btn-sm tooltip tooltip-left lg:tooltip-bottom"
@@ -243,11 +313,39 @@ export const UserInterface = component$(() => {
       </div>
 
       <div class="flex flex-1 overflow-hidden">
+        {/* Tree View Sidebar */}
+        <div class="border-base-300 bg-base-200 flex w-64 flex-col overflow-hidden border-r">
+          <div class="border-base-300 flex items-center justify-between border-b px-4 py-2">
+            <h2 class="text-[10px] font-bold tracking-wider text-neutral-500 uppercase">
+              Structure
+            </h2>
+          </div>
+          <div class="flex-1 overflow-auto p-2">
+            <DndTreeView
+              root={editor.present.root}
+              selectedId={editor.selectedNodeId}
+              onSelect$={(id) => dispatch(editorSlice.actions.selectNode(id))}
+              onMove$={(info) => {
+                if (info.targetId && info.position) {
+                  dispatch(
+                    editorSlice.actions.moveNode({
+                      sourceId: info.sourceId,
+                      targetId: info.targetId,
+                      position: info.position,
+                    }),
+                  );
+                }
+              }}
+              builder={LayoutNodeBuilder}
+            />
+          </div>
+        </div>
+
         {/* Visualizer Area */}
         <div
           class="bg-base-300/20 relative flex-1 overflow-auto p-12"
           style={{ minWidth: "300px" }}
-          onClick$={() => (uiState.selectedNodeId = null)}
+          onClick$={() => dispatch(editorSlice.actions.selectNode(null))}
         >
           <div
             class={[
@@ -266,9 +364,9 @@ export const UserInterface = component$(() => {
           >
             <div class="h-full w-full overflow-hidden">
               <LayoutNodeRenderer
-                node={uiState.irData.root}
-                selectedId={uiState.selectedNodeId}
-                onSelect$={(id) => (uiState.selectedNodeId = id)}
+                node={editor.present.root}
+                selectedId={editor.selectedNodeId}
+                onSelect$={(id) => dispatch(editorSlice.actions.selectNode(id))}
                 visualSettings={uiState.visualSettings}
               />
             </div>
@@ -350,7 +448,7 @@ export const UserInterface = component$(() => {
               value={uiState.editorContent}
               language={uiState.editorMode}
               onChange$={onEditorChange}
-              highlightId={uiState.selectedNodeId}
+              highlightId={editor.selectedNodeId}
             />
           </div>
 

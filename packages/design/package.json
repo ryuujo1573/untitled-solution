@@ -1,6 +1,6 @@
 {
   "name": "@cnmjs/design",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "BaaS Design System",
   "engines": {
     "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
