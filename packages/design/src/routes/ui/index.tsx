@@ -236,7 +236,7 @@ export const UserInterface = component$(() => {
         <div class="flex items-center gap-6">
           <div class="flex items-center gap-3">
             <h1 class="text-xl font-black tracking-tight">
-              AIGC Layout Studio
+               Flow IR
             </h1>
             <VersionBadge />
           </div>
