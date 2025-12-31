@@ -1,0 +1,236 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/ryuujo1573/untitled-solution/main/packages/schema/domain-manifest.schema.json",
+  "title": "Domain Manifest",
+  "description": "A single source of truth for describing a Domain-Driven backend service.",
+  "type": "object",
+  "properties": {
+    "entities": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/entity"
+      }
+    },
+    "api": {
+      "type": "object",
+      "properties": {
+        "endpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/endpoint"
+          }
+        }
+      }
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "rateLimits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/rateLimit"
+          }
+        },
+        "storage": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "enum": ["local", "s3"]
+            },
+            "baseUrl": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "entity": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["aggregate-root", "entity"]
+        },
+        "type": {
+          "type": "string",
+          "enum": ["collection", "single"]
+        },
+        "authenticable": {
+          "type": "boolean"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/property"
+          }
+        },
+        "relations": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/relation"
+          }
+        },
+        "invariants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/invariant"
+          }
+        },
+        "policies": {
+          "type": "object",
+          "properties": {
+            "create": { "$ref": "#/definitions/policyList" },
+            "read": { "$ref": "#/definitions/policyList" },
+            "update": { "$ref": "#/definitions/policyList" },
+            "delete": { "$ref": "#/definitions/policyList" }
+          }
+        },
+        "hooks": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/hookList"
+          }
+        },
+        "api": {
+          "type": "object",
+          "properties": {
+            "path": { "type": "string" },
+            "exclude": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+              }
+            },
+            "rateLimits": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/rateLimit"
+              }
+            },
+            "endpoints": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/endpoint"
+              }
+            }
+          }
+        }
+      },
+      "required": ["kind", "type"]
+    },
+    "property": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "date",
+            "group",
+            "money",
+            "location",
+            "image",
+            "file"
+          ]
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "required": { "type": "boolean" },
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "pattern": { "type": "string" }
+          }
+        },
+        "properties": {
+          "description": "Used when type is 'group'",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/property"
+          }
+        }
+      },
+      "required": ["type"]
+    },
+    "relation": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["belongsTo", "hasMany", "belongsToMany", "oneToOne"]
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "target"]
+    },
+    "invariant": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "expression": { "type": "string" },
+        "message": { "type": "string" }
+      },
+      "required": ["name", "expression", "message"]
+    },
+    "policyList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "access": {
+            "type": "string",
+            "enum": ["public", "restricted", "admin"]
+          },
+          "condition": {
+            "type": "string"
+          }
+        },
+        "required": ["access"]
+      }
+    },
+    "hookList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["inline", "script", "webhook"]
+          },
+          "handler": { "type": "string" }
+        },
+        "required": ["type", "handler"]
+      }
+    },
+    "rateLimit": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "limit": { "type": "number" },
+        "ttl": { "type": "number" }
+      },
+      "required": ["limit", "ttl"]
+    },
+    "endpoint": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]
+        },
+        "path": { "type": "string" },
+        "action": { "type": "string" },
+        "handler": { "type": "string" }
+      },
+      "required": ["method", "path"]
+    }
+  }
+}

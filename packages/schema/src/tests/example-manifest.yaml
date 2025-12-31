@@ -1,0 +1,74 @@
+entities:
+  Users:
+    kind: aggregate-root
+    type: collection
+    authenticable: true
+    properties:
+      email:
+        type: string
+        validation:
+          required: true
+          pattern: '^[^@]+@[^@]+\.[^@]+$'
+      profile:
+        type: group
+        properties:
+          firstName: { type: string }
+          lastName: { type: string }
+          avatar: { type: image }
+    policies:
+      read:
+        - access: restricted
+          condition: self
+      update:
+        - access: restricted
+          condition: self
+    api:
+      path: /users
+      exclude: [DELETE]
+
+  SiteSettings:
+    kind: aggregate-root
+    type: single
+    properties:
+      siteName: { type: string }
+      maintenanceMode: { type: boolean }
+    policies:
+      read:
+        - access: public
+      update:
+        - access: admin
+
+  Products:
+    kind: aggregate-root
+    type: collection
+    properties:
+      name: { type: string }
+      price: { type: money }
+      stock: { type: number }
+    invariants:
+      - name: positive-stock
+        expression: 'this.stock >= 0'
+        message: 'Stock cannot be negative'
+    relations:
+      category:
+        type: belongsTo
+        target: Categories
+
+  Categories:
+    kind: entity
+    type: collection
+    properties:
+      name: { type: string }
+    relations:
+      products:
+        type: hasMany
+        target: Products
+
+settings:
+  rateLimits:
+    - name: global-default
+      limit: 100
+      ttl: 60000
+  storage:
+    provider: s3
+    baseUrl: 'https://my-bucket.s3.amazonaws.com'
